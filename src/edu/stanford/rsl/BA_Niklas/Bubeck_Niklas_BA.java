@@ -833,7 +833,7 @@ public class Bubeck_Niklas_BA {
 ////
 ////		// forward and back projection
 //		ProjectorAndBackprojector o = new ProjectorAndBackprojector(360, 2 * Math.PI);
-////		Grid2D sino_ones = o.project(ones, new Grid2D(200, 360));
+////		Grid2D sino_ones = o.project(ones, new Grid2D(200, 360));  
 //////				sino_ones.show("sino_ones");
 ////		Grid2D ones_reko = o.backprojection_pixel(sino_ones, size);
 ////		NumericGrid reko_temp = p.backprojection_pixel((Grid2D) filled_dark_sino, size);
