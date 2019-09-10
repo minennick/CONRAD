@@ -1290,7 +1290,7 @@ public class Bubeck_Niklas_BA {
 		final long timeEnd = System.currentTimeMillis();
 		System.out.println("Executing Bubeck_Niklas_BA done in : " + (timeEnd - timeStart) + " Millisek.");
 
-	}
+	} 
   
 	/**
 	 * MAIN
