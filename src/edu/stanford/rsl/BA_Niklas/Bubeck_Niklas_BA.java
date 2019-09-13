@@ -582,11 +582,11 @@ public class Bubeck_Niklas_BA {
 				}
 				
 
-//				if ((0 == (int) abs.getAtIndex(i, j)) && ( 0 == (int) dar.getAtIndex(i, j))) {
-//					System.out.println("ist 0 0 ");
-//					continue;
-//
-//				}
+				if ((0 == (int) abs.getAtIndex(i, j)) && ( 0 == (int) dar.getAtIndex(i, j))) {
+					System.out.println("ist 0 0 ");
+					continue;
+
+				}
 //				if(abs.getAtIndex(i, j) != (float) 0.0) {
 				printWriterdark.println(dar.getAtIndex(i, j));
 				printWriterabso.println(abs.getAtIndex(i, j));
@@ -740,7 +740,7 @@ public class Bubeck_Niklas_BA {
 	}
 
 	public static NumericGrid fill_up_sinogram(NumericGrid sino_dark, NumericGrid sino_abso,
-			PolynomialRegression regression) {
+			double m) {
 
 		Grid2D abs_global = (Grid2D) sino_abso;
 		Grid2D dark_global = (Grid2D) sino_dark;
@@ -763,7 +763,7 @@ public class Bubeck_Niklas_BA {
 			for (int j = 0; j < abs.getHeight(); j++) {
 
 				float temp = abs.getAtIndex(i, j);
-				float val = (float) (regression.beta(3) * Math.pow(temp, 3) + regression.beta(2) * Math.pow(temp, 2) + regression.beta(1) * temp + regression.beta(0));   //(regression.beta(3) * Math.pow(temp, 3) + (regression.beta(2) * Math.pow(temp, 2)
+				float val = (float) m * temp;   //(regression.beta(3) * Math.pow(temp, 3) + (regression.beta(2) * Math.pow(temp, 2)
 				
 //				System.out.println("i: " + i + "j: " + j + "val: " + val);
 				if (((i > xstart && i < xend) || (i > xstart2 && i < xend2)) && (temp != (float) 0.0)) {
@@ -803,13 +803,20 @@ public class Bubeck_Niklas_BA {
 //		double [][] points2 = {{2 ,3}, {2, 8}, {3, 4} ,{10, 5} ,{14, 3} ,{3, 8}};
 
 		// Calculate regression and put the values to list
-		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 3);
-		List<Float> reglist = new ArrayList<Float>();
-		for (int i = 0; i <= 3; i++) {
-			reglist.add((float) regression.beta(i));
-		}
-		ListInFile.export(reglist, "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Files/reg.csv", "regression");
 
+		
+		//		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 3);
+//		List<Float> reglist = new ArrayList<Float>();
+//		for (int i = 0; i <= 3; i++) {
+//			reglist.add((float) regression.beta(i));
+//		}
+//		ListInFile.export(reglist, "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Files/reg.csv", "regression");
+
+		
+
+		
+		
+		
 		// execute Python script to visualize data
 		String command = "py C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Files/BA.py";
 		try {
@@ -818,9 +825,41 @@ public class Bubeck_Niklas_BA {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
 
+		
+		// calc gradient 
+		
+		double darksum = 0;
+		double absosum = 0;
+		int darkcounter = 0;
+		int absocounter = 0;
+		for(int k = 0; k < points.length; k++) {
+			if(points[k][0] == (float)0.0) {
+				continue;
+			}
+			darksum += points[k][0];
+			darkcounter++;
+		}
+		for(int l = 0; l < points.length; l++) {
+			if(points[l][1] == (float) 0.0) {
+				continue;
+			}
+			absosum += points[l][1];
+			absocounter++;
+		}
+		
+		double meandark = darksum / darkcounter;
+		double meanabso = absosum / absocounter;
+		
+		double m = meandark / meanabso;
+		System.out.println("meandark: " + meandark);
+		System.out.println("meanabso: " + meanabso);
+		System.out.println("Mittelwert ist: " + m);
+		
 		// fill up unknown dark_sinogram data
-		NumericGrid filled_dark_sino = fill_up_sinogram(sino_dark_trunc, sino_amp_mat, regression);
+		NumericGrid filled_dark_sino = fill_up_sinogram(sino_dark_trunc, sino_amp_mat, m);
 //		filled_dark_sino.show("filled_up");
 //
 ////		// build picture with ones for scaling the backprojection
@@ -1218,7 +1257,7 @@ public class Bubeck_Niklas_BA {
 		
 		
 //		pci.show("pci");
-//		pci_sino.show("pci_sino");
+		pci_sino.show("pci_sino");
 //		pci_sino_truncated.show("pci_sino_truncated");
 		/*
 		 * -----------------------------------------------------------------------------
