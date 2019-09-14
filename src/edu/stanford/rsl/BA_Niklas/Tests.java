@@ -8,9 +8,7 @@ import org.math.plot.utils.Array;
 
 public class Tests {
 	public static void main(String[] args) {
-		String[] d = new String[20];
-		d[1] = "tes";
-		d[5] = "d";
-		System.out.println(d[6]);
+		float hallo = (Float) null;
+		System.out.println(hallo);
 	}
 }

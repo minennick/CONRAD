@@ -72,6 +72,7 @@ public class Bubeck_Niklas_BA {
 	static PhaseContrastImages pci;
 	static PhaseContrastImages pci_sino;
 	static PhaseContrastImages pci_sino_truncated;
+	static NumericGrid splitted_dark;
 
 	/**
 	 * creates random ellipses
@@ -521,8 +522,10 @@ public class Bubeck_Niklas_BA {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(nr_of_projections, 2 * Math.PI);
 		Grid2D mat_sino = p.project((Grid2D)mat, new Grid2D(200, 360));
 		
-		Grid2D splitted_dark = new Grid2D(200, 360);
+		
+		Grid2D splitted_calc_dark = new Grid2D(200, 360);
 		NumericPointwiseOperators.copy(splitted_dark, trc_dark_sino);
+		NumericPointwiseOperators.copy(splitted_calc_dark, trc_dark_sino);
 		
 		
 		for(int i = 0; i < materials.length; i++) {
@@ -539,13 +542,14 @@ public class Bubeck_Niklas_BA {
 					if( material_sino.getAtIndex(k, l) == (float) 0.0) {
 						continue;
 					}else {
-						splitted_dark.setAtIndex(k, l, 0);
+						((Grid2D) splitted_dark).setAtIndex(k, l,  (float) 1000);
+						splitted_calc_dark.setAtIndex(k, l,(float) 0.0);
 					}
 				}
 			}
 			
 		}
-		return splitted_dark;
+		return splitted_calc_dark;
 	}
 	
 	
@@ -575,13 +579,16 @@ public class Bubeck_Niklas_BA {
 //				 punkt in file reinschreiben
 				if(counter == 0) {
 					if ((i > xstart && i < xend) || (i > xstart2 && i < xend2)) {
-					System.out.println("ist 0 0 ");
+//					System.out.println("ist 0 0 ");
 					continue;
 
 					}
 				}
 				
-
+				if(((Grid2D) splitted_dark).getAtIndex(i, j) == (float) 1000 ) {
+					continue;
+				}
+					
 //				if ((0 == (int) abs.getAtIndex(i, j)) && ( 0 == (int) dar.getAtIndex(i, j))) {
 //					System.out.println("ist 0 0 ");
 //					continue;
@@ -782,7 +789,7 @@ public class Bubeck_Niklas_BA {
 	public static NumericGrid calculate_sino_dark(NumericGrid amp_material, NumericGrid sino_dark_trunc, NumericGrid[]materials, int counter)
 			throws IOException {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(nr_of_projections, 2 * Math.PI);
-		amp_material.show("ich bin der fehler");
+//		amp_material.show("ich bin der fehler");
 		Grid2D amp_mat = (Grid2D) amp_material;
 		Grid2D sino_amp_mat = p.project(amp_mat, new Grid2D(200, 360));
 		Grid2D thresh_map = new Grid2D(size, size);
@@ -791,9 +798,9 @@ public class Bubeck_Niklas_BA {
 		
 		if(counter == 0) {
 			sino_dark_trunc = split_dark(pci_sino_truncated.getDark(), amp_material, materials );
-			sino_dark_trunc.show("splitted dark");
+			
 		}
-		
+		sino_dark_trunc.show("splitted dark");
 		double[][] points = get_comp_points(sino_amp_mat, sino_dark_trunc, thresh_map, false, counter);
 
 		// Absorption Correction
@@ -1155,6 +1162,7 @@ public class Bubeck_Niklas_BA {
 		 * 
 		 */
 		
+		splitted_dark = new Grid2D(200, 360);
 		// copy
 		Grid2D trcdark = (Grid2D) pci_sino_truncated.getDark();
 		Grid2D sino_dark_trunc = new Grid2D(200, 360);
@@ -1180,9 +1188,10 @@ public class Bubeck_Niklas_BA {
 //				pci_sino.getDark().show("reko dark");
 
 				filled_sinos[j] = calculate_sino_dark(amp_materials[j], sino_dark_trunc, amp_materials, counter);
-				sino_dark_trunc = (Grid2D) filled_sinos[j];
+				
 				
 				NumericGrid diff = NumericPointwiseOperators.subtractedBy(pci_sino.getDark(), sino_dark_trunc);
+				NumericPointwiseOperators.abs(diff);
 				ImagePlus imp3 = new ImagePlus("Filled", ImageUtil.wrapGrid2D((Grid2D) diff).createImage());
 				IJ.saveAs(imp3, "png", "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Bilder/BilderTestFilled/difference");
 				float error = NumericPointwiseOperators.mean(diff);

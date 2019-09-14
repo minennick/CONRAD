@@ -191,7 +191,7 @@ public class Frame1 {
 		frame.getContentPane().add(iterCheckbox);
 		
 		iter_num = new JTextField();
-		iter_num.setText("5");
+		iter_num.setText("1");
 		iter_num.setBounds(288, 197, 23, 20);
 		frame.getContentPane().add(iter_num);
 		iter_num.setColumns(10);
