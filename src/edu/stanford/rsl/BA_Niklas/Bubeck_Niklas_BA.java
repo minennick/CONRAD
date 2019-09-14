@@ -235,6 +235,16 @@ public class Bubeck_Niklas_BA {
 //		return kernel;
 //	}
 
+	/**
+	 * adds variable noise to the img 
+	 * 
+	 * @param img - img to add noise to
+	 * @param mean - mean value of the distribution
+	 * @param variance - variance of the distribution
+	 * @param distribution - kind of distribution (gaussian, poisson)
+	 * @return  noisy img
+	 */
+	
 	public static NumericGrid add_noise(NumericGrid img, double mean, double variance, String distribution) {
 		Grid2D image = (Grid2D) img;
 		for (int i = 0; i < image.getWidth(); i++) {
@@ -258,7 +268,14 @@ public class Bubeck_Niklas_BA {
 
 		return image;
 	}
-
+	
+	/**
+	 * calculates the mean value of a given String[] and ignoring null
+	 * 
+	 * @param mean_values - array of values ​​whose mean we are interested in
+	 * @return  mean value of the given array
+	 */
+	
 	private static double calculate_mean_value(String[] mean_values) {
 		int counter = 0;
 		double sum = 0;
@@ -274,7 +291,16 @@ public class Bubeck_Niklas_BA {
 		mean = sum / counter;
 		return mean;
 	}
-
+	
+	
+	/**
+	 * segmentates a given image (dark_gt) into the different materials
+	 * 
+	 * @param dark_gt - image that will be segmentated 
+	 * @param noise - respects noise and with the factor +- noise as an interval
+	 * @return  array of the different materials
+	 */
+	
 	public static NumericGrid[] get_segmentation(NumericGrid dark_gt, double noise) {
 		Grid2D darkgt = (Grid2D) dark_gt;
 		Float[] values = new Float[darkgt.getHeight() * darkgt.getWidth()];
@@ -464,7 +490,18 @@ public class Bubeck_Niklas_BA {
 		PhaseContrastImages pci_sino_fake = new PhaseContrastImages(fake_amp, fake_phase, fake_dark);
 		return pci_sino_fake;
 	}
-
+	
+	
+	/**
+	 * simulates truncation for a single image 
+	 * 
+	 * @param image - copy of this image will be truncated 
+	 * @param min - starting value for truncation
+	 * @param max - ending value for truncation 
+	 * @param axes - defines the axes that will be truncated (x ; y)
+	 * @param value - value that will be set as truncation
+	 * @return  truncated copy
+	 */
 	public static NumericGrid fake_truncation_image(Grid2D image, int min, int max, String axes, int value) {
 
 		Grid2D trunc = new Grid2D(image.getWidth(), image.getHeight());
@@ -498,7 +535,13 @@ public class Bubeck_Niklas_BA {
 
 		return trunc;
 	}
-
+	
+	/**
+	 * 
+	 *      !!!!!  Deprecated  !!!!! 
+	 * 
+	 * */
+	
 	public static PhaseContrastImages region_of_interest(PhaseContrastImages sino_original,
 			PhaseContrastImages sino_roi, int iter_num) {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(360, 2 * Math.PI);
@@ -518,6 +561,14 @@ public class Bubeck_Niklas_BA {
 	
 	
 	
+	/**
+	 * splits the truncated sinogram depending on a single material
+	 * 
+	 * @param trc_dark_sino - truncated darkfield sinogram
+	 * @param mat - image of a single material
+	 * @param materials - list of all materials
+	 * @return sinogram depending of a single material
+	 */
 	public static NumericGrid split_dark(NumericGrid trc_dark_sino, NumericGrid mat , NumericGrid[] materials) {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(nr_of_projections, 2 * Math.PI);
 		Grid2D mat_sino = p.project((Grid2D)mat, new Grid2D(200, 360));
@@ -552,6 +603,18 @@ public class Bubeck_Niklas_BA {
 		return splitted_calc_dark;
 	}
 	
+	
+	/**
+	 * calculates the correlation points between the dfi and abs image
+	 * 
+	 * @param abso - sinogram of the absorption image
+	 * @param dark - sinogram of the dark field image 
+	 * @param thresh - thresholding with s.kaeppler 
+	 * (currently not used)
+	 * @param counter - to handle different actions in different iterations
+	 * 
+	 * @return  points - 2D array of the correlation points
+	 */
 	
 	public static double[][] get_comp_points(NumericGrid abso, NumericGrid dark, NumericGrid thresh_map, boolean thresh, int counter)
 			throws IOException {
@@ -674,7 +737,7 @@ public class Bubeck_Niklas_BA {
 	}
 
 	/**
-	 * corrects absorption
+	 * corrects absorption (currently not used)
 	 * 
 	 * @param dark     - Sinogram of DFI
 	 * @param abso     - Sinogram of Absorption
@@ -745,7 +808,18 @@ public class Bubeck_Niklas_BA {
 		dabso.show("dabso");
 		return dabso;
 	}
-
+	
+	
+	/**
+	 * fills up the truncated sectors of the dark field sinogram
+	 * 
+	 * @param sino_dark - dfi sinogram 
+	 * @param sino_abso - absorption sinogram
+	 * @param regression - function of the polynomial regression
+	 * @return  corrected dfi sinogram
+	 */
+	
+	
 	public static NumericGrid fill_up_sinogram(NumericGrid sino_dark, NumericGrid sino_abso,
 			PolynomialRegression regression) {
 
@@ -785,7 +859,17 @@ public class Bubeck_Niklas_BA {
 
 		return dark;
 	}
-
+	
+	
+	/**
+	 * does the splitting, correlation computation, regression, filling up 
+	 * was outsourced to have a simple function doing it all, but got complicated with more materials
+	 * 
+	 * @param mean_values - array of values ​​whose mean we are interested in
+	 * @return  mean value of the given array
+	 */
+	
+	
 	public static NumericGrid calculate_sino_dark(NumericGrid amp_material, NumericGrid sino_dark_trunc, NumericGrid[]materials, int counter)
 			throws IOException {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(nr_of_projections, 2 * Math.PI);
@@ -873,34 +957,55 @@ public class Bubeck_Niklas_BA {
 //		errorlist.add(error);
 		return filled_dark_sino;
 	}
-
-	public static NumericGrid iterative_dark_reconstruction(NumericGrid dark_sino) {
-		// build picture with ones for scaling the backprojection
-		Grid2D ones = new Grid2D(size, size);
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				ones.setAtIndex(i, j, 1);
-			}
-		}
-
-		// forward and back projection
-		ProjectorAndBackprojector o = new ProjectorAndBackprojector(360, 2 * Math.PI);
-		Grid2D sino_ones = o.project(ones, new Grid2D(200, 360));
-//		sino_ones.show("sino_ones");
-		Grid2D ones_reko = o.backprojection_pixel(sino_ones, size);
-//		ones_reko.show("ones_reko");
-
-		// lokalisation algorithm : wie schaut das DFI aus ? braucht man das?
-
-		// fill up sinogram
-		int i = 1;
-		while (i < iter_num) {
-
-		}
-		NumericGrid dark_end = null;
-		return dark_end;
-	}
-
+	
+	
+	/**
+	 * calculates the mean value of a given String[] and ignoring null
+	 * 
+	 * @param mean_values - array of values ​​whose mean we are interested in
+	 * @return  mean value of the given array
+	 */
+	
+	
+//	public static NumericGrid iterative_dark_reconstruction(NumericGrid dark_sino) {
+//		// build picture with ones for scaling the backprojection
+//		Grid2D ones = new Grid2D(size, size);
+//		for (int i = 0; i < size; i++) {
+//			for (int j = 0; j < size; j++) {
+//				ones.setAtIndex(i, j, 1);
+//			}
+//		}
+//
+//		// forward and back projection
+//		ProjectorAndBackprojector o = new ProjectorAndBackprojector(360, 2 * Math.PI);
+//		Grid2D sino_ones = o.project(ones, new Grid2D(200, 360));
+////		sino_ones.show("sino_ones");
+//		Grid2D ones_reko = o.backprojection_pixel(sino_ones, size);
+////		ones_reko.show("ones_reko");
+//
+//		// lokalisation algorithm : wie schaut das DFI aus ? braucht man das?
+//
+//		// fill up sinogram
+//		int i = 1;
+//		while (i < iter_num) {
+//
+//		}
+//		NumericGrid dark_end = null;
+//		return dark_end;
+//	}
+	
+	
+	/**
+	 * iterative method to reconstruct a image 
+	 * 
+	 * @param orig_dark - ground truth dfi 
+	 * @param pci_sino - set of PhaseContrastImages
+	 * @param iter_num - number of iterations for the reconstruction
+	 * @param error - till this error the image will be reconstructed
+	 * @return  reconstructed pci
+	 */
+	
+	
 	public static PhaseContrastImages iterative_reconstruction(NumericGrid orig_dark, PhaseContrastImages pci_sino,
 			int iter_num, int error) {
 
@@ -1008,7 +1113,20 @@ public class Bubeck_Niklas_BA {
 		System.out.println("iterative reconstruction done");
 		return pci_recon;
 	}
-
+	
+	
+	/**
+	 * 
+	 * !!!!! currently iterations wont work !!!!!!
+	 * 
+	 * this is "main" method 
+	 * handling inputs from the UI, simulates data, adds noise, truncates, calls the calculate_sino_dark method to handle the rest for all materials
+	 * 
+	 * 
+	 * @param mean_values - array of values ​​whose mean we are interested in
+	 * @return  mean value of the given array
+	 */
+	
 	public static void all(String[] args) throws IOException {
 		/*
 		 * -----------------------------------------------------------------------------
