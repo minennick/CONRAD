@@ -1304,9 +1304,11 @@ public class Bubeck_Niklas_BA {
 				String path = "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Bilder/BilderTestFilled/reko" + counter;
 				IJ.saveAs(imp, "png", path);
 //				pci_sino.getDark().show("reko dark");
-
-				filled_sinos[j] = calculate_sino_dark(amp_materials[j], sino_dark_trunc, amp_materials, counter);
 				
+				sino_dark_trunc.show("sino_dark_trunc" + counter);
+				
+				filled_sinos[j] = calculate_sino_dark(amp_materials[j], sino_dark_trunc, amp_materials, counter);
+				filled_sinos[j].show("filled sinos [j]" + counter);
 				
 				NumericGrid diff = NumericPointwiseOperators.subtractedBy(pci_sino.getDark(), sino_dark_trunc);
 				NumericPointwiseOperators.abs(diff);
@@ -1315,6 +1317,9 @@ public class Bubeck_Niklas_BA {
 				float error = NumericPointwiseOperators.mean(diff);
 				errorlist.add(error);
 				System.out.println("error betraegt: " + error);
+				
+				NumericPointwiseOperators.copy(sino_dark_trunc, filled_sinos[j]);
+				sino_dark_trunc.show("new sino");
 
 			}
 
