@@ -1117,7 +1117,7 @@ public class Bubeck_Niklas_BA {
 	
 	/**
 	 * 
-	 * !!!!! currently iterations wont work !!!!!!
+	 *
 	 * 
 	 * this is "main" method 
 	 * handling inputs from the UI, simulates data, adds noise, truncates, calls the calculate_sino_dark method to handle the rest for all materials
