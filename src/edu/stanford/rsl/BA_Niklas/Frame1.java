@@ -80,7 +80,7 @@ public class Frame1 {
 		frame.getContentPane().setLayout(null);
 		
 		nr_ellipses = new JTextField();
-		nr_ellipses.setText("5");
+		nr_ellipses.setText("1");
 		nr_ellipses.setBounds(288, 21, 36, 20);
 		frame.getContentPane().add(nr_ellipses);
 		nr_ellipses.setColumns(10);
@@ -109,6 +109,7 @@ public class Frame1 {
 		simCheckbox.setSelected(true);
 		
 		JCheckBox trcCheckbox = new JCheckBox("truncate data");
+		trcCheckbox.setSelected(true);
 		trcCheckbox.setBounds(47, 107, 97, 23);
 		frame.getContentPane().add(trcCheckbox);
 		
@@ -171,6 +172,7 @@ public class Frame1 {
 		frame.getContentPane().add(label_1);
 		
 		JCheckBox darkCheckbox = new JCheckBox("Only Dark");
+		darkCheckbox.setSelected(true);
 		darkCheckbox.setBounds(70, 132, 97, 23);
 		frame.getContentPane().add(darkCheckbox);
 		
@@ -189,7 +191,7 @@ public class Frame1 {
 		frame.getContentPane().add(iterCheckbox);
 		
 		iter_num = new JTextField();
-		iter_num.setText("50");
+		iter_num.setText("5");
 		iter_num.setBounds(288, 197, 23, 20);
 		frame.getContentPane().add(iter_num);
 		iter_num.setColumns(10);
@@ -199,7 +201,7 @@ public class Frame1 {
 		frame.getContentPane().add(lblIternum);
 		
 		error_val = new JTextField();
-		error_val.setText("0.5");
+		error_val.setText("0");
 		error_val.setBounds(288, 234, 23, 20);
 		frame.getContentPane().add(error_val);
 		error_val.setColumns(10);

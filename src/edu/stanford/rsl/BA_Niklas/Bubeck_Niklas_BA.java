@@ -82,27 +82,52 @@ public class Bubeck_Niklas_BA {
 		ab = new double[nr_ellipses][2];
 		rho = new double[nr_ellipses];
 		df = new double[nr_ellipses];
-
-		for (int i = 0; i < nr_ellipses; i++) {
-
-			// translation between -0.5 and 0.5
-			t[i][0] = Math.random() - 0.5; // delta_x
-			t[i][1] = Math.random() - 0.5; // delta_y
-
-			// size between 0 and 0.75
-			ab[i][0] = Math.random() * 0.75; // a
-			ab[i][1] = Math.random() * 0.75; // b
-
-			// rotation
-			double alpha = Math.random() * 90;
-			R[i] = new SimpleMatrix(
-					new double[][] { { Math.cos(alpha), -Math.sin(alpha) }, { Math.sin(alpha), Math.cos(alpha) } });
-
-			// values
-			rho[i] = Math.random();
-			df[i] = Math.random();
-
-		}
+		
+		
+		t[0][0] = 0.42;
+		t[0][1] = 0.21;
+		t[1][0] = -0.49;
+		t[1][1] = 0.05;
+		
+		ab[0][0] = 0.45;
+		ab[0][1] = 0.16;
+		ab[1][0] = 0.55;
+		ab[1][1] = 0.60;
+		
+		double alpha0 = 33.16;
+		R[0] = new SimpleMatrix(
+				new double[][] { { Math.cos(alpha0), -Math.sin(alpha0) }, { Math.sin(alpha0), Math.cos(alpha0) } });
+		
+		double alpha1 = 6.6;
+		R[1] = new SimpleMatrix(
+				new double[][] { { Math.cos(alpha1), -Math.sin(alpha1) }, { Math.sin(alpha1), Math.cos(alpha1) } });
+		
+		rho[0] = 0.92; 
+		rho[1] = 0.40;
+		
+		df[0] = 0.61;
+		df[1] = 0.98;
+		
+//		for (int i = 0; i < nr_ellipses; i++) {
+//
+//			// translation between -0.5 and 0.5
+//			t[i][0] = Math.random() - 0.5; // delta_x
+//			t[i][1] = Math.random() - 0.5; // delta_y
+//
+//			// size between 0 and 0.75
+//			ab[i][0] = Math.random() * 0.75; // a
+//			ab[i][1] = Math.random() * 0.75; // b
+//
+//			// rotation
+//			double alpha = Math.random() * 90;
+//			R[i] = new SimpleMatrix(
+//					new double[][] { { Math.cos(alpha), -Math.sin(alpha) }, { Math.sin(alpha), Math.cos(alpha) } });
+//
+//			// values
+//			rho[i] = Math.random();
+//			df[i] = Math.random();
+//
+//		}
 	}
 
 	/**
@@ -515,7 +540,7 @@ public class Bubeck_Niklas_BA {
 		return pci_reko;
 	}
 
-	public static double[][] get_comp_points(NumericGrid abso, NumericGrid dark, NumericGrid thresh_map, boolean thresh)
+	public static double[][] get_comp_points(NumericGrid abso, NumericGrid dark, NumericGrid thresh_map, boolean thresh, int counter)
 			throws IOException {
 
 		if (thresh == true) {
@@ -539,7 +564,7 @@ public class Bubeck_Niklas_BA {
 			for (int j = 0; j < abs.getHeight(); j++) {
 
 				// punkt in file reinschreiben
-				if ((i > xstart && i < xend) || (i > xstart2 && i < xend2)) {
+				if ((i > xstart && i < xend) || (i > xstart2 && i < xend2) ) {
 					System.out.println("ist 0 0 ");
 					continue;
 
@@ -652,7 +677,7 @@ public class Bubeck_Niklas_BA {
 //		Grid2D dabso = new Grid2D(size, size);
 
 		// calc inital fabso
-		double[][] points = get_comp_points(abso, dark, thresh_map, true);
+		double[][] points = get_comp_points(abso, dark, thresh_map, true, 3);
 		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 3);
 
 		// calc thresholding map
@@ -674,7 +699,7 @@ public class Bubeck_Niklas_BA {
 			}
 
 			// calc new fabso
-			points = get_comp_points(abso, dark, thresh_map, true);
+			points = get_comp_points(abso, dark, thresh_map, true, 2);
 			regression = PolynomialRegression.calc_regression(points, 3);
 
 			iter++;
@@ -703,7 +728,7 @@ public class Bubeck_Niklas_BA {
 	}
 
 	public static NumericGrid fill_up_sinogram(NumericGrid sino_dark, NumericGrid sino_abso,
-			PolynomialRegression regression) {
+			PolynomialRegression regression, int counter) {
 
 		Grid2D abs_global = (Grid2D) sino_abso;
 		Grid2D dark_global = (Grid2D) sino_dark;
@@ -729,7 +754,7 @@ public class Bubeck_Niklas_BA {
 				float val = (float) (regression.beta(3) * Math.pow(temp, 3) + regression.beta(2) * Math.pow(temp, 2)
 						+ regression.beta(1) * temp + regression.beta(0));
 				System.out.println("i: " + i + "j: " + j + "val: " + val);
-//				if (((i > xstart && i < xend) || (i > xstart2 && i < xend2)) && (temp != (float) 0.0)) {
+//				if (((i > xstart && i < xend) || (i > xstart2 && i < xend2))) {
 //					dark.setAtIndex(i, j, val);
 //					System.out.println("setze value dark: " + val + "und temp als: " + temp + "an der stelle i: " + i
 //							+ "und j: " + j);
@@ -742,7 +767,7 @@ public class Bubeck_Niklas_BA {
 		return dark;
 	}
 
-	public static NumericGrid calculate_sino_dark(NumericGrid amp_material, NumericGrid sino_dark_trunc)
+	public static NumericGrid calculate_sino_dark(NumericGrid amp_material, NumericGrid sino_dark_trunc, int counter)
 			throws IOException {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(nr_of_projections, 2 * Math.PI);
 		amp_material.show("ich bin der fehler");
@@ -751,7 +776,7 @@ public class Bubeck_Niklas_BA {
 		Grid2D thresh_map = new Grid2D(size, size);
 //		pci_sino.getDark().show("Dark");
 //	pci_sino.getAmp().show("Amp");
-		double[][] points = get_comp_points(sino_amp_mat, sino_dark_trunc, thresh_map, false);
+		double[][] points = get_comp_points(sino_amp_mat, sino_dark_trunc, thresh_map, false, counter);
 
 		// Absorption Correction
 //		NumericGrid dabso = correct_absorption(pci.getDark(), pci_sino.getDark(), pci.getAmp(), 2, 10);
@@ -777,7 +802,7 @@ public class Bubeck_Niklas_BA {
 		}
 
 		// fill up unknown dark_sinogram data
-		NumericGrid filled_dark_sino = fill_up_sinogram(sino_dark_trunc, sino_amp_mat, regression);
+		NumericGrid filled_dark_sino = fill_up_sinogram(sino_dark_trunc, sino_amp_mat, regression, counter);
 //		filled_dark_sino.show("filled_up");
 //
 ////		// build picture with ones for scaling the backprojection
@@ -948,7 +973,7 @@ public class Bubeck_Niklas_BA {
 			NumericPointwiseOperators.sqrt(orig_dark_copy);
 
 			float mean = NumericPointwiseOperators.mean(orig_dark_copy);
-			errorlist.add(mean);
+			errorlist.add(Math.abs(mean));
 
 			i++;
 		}
@@ -1136,15 +1161,15 @@ public class Bubeck_Niklas_BA {
 				IJ.saveAs(imp, "png", path);
 //				pci_sino.getDark().show("reko dark");
 
-				filled_sinos[j] = calculate_sino_dark(amp_materials[j], sino_dark_trunc);
+				filled_sinos[j] = calculate_sino_dark(amp_materials[j], sino_dark_trunc, counter);
 				sino_dark_trunc = (Grid2D) filled_sinos[j];
 				
 				NumericGrid diff = NumericPointwiseOperators.subtractedBy(pci_sino.getDark(), sino_dark_trunc);
 				ImagePlus imp3 = new ImagePlus("Filled", ImageUtil.wrapGrid2D((Grid2D) diff).createImage());
 				IJ.saveAs(imp3, "png", "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Bilder/BilderTestFilled/difference");
 				float error = NumericPointwiseOperators.mean(diff);
-				errorlist.add(error);
-				System.out.println("error betraegt: " + error);
+				errorlist.add(Math.abs(error));
+				System.out.println("error betraegt: " + Math.abs(error));
 
 			}
 
