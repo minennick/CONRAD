@@ -86,27 +86,27 @@ public class Bubeck_Niklas_BA {
 		
 		t[0][0] = 0.42;
 		t[0][1] = 0.21;
-		t[1][0] = -0.49;
-		t[1][1] = 0.05;
+//		t[1][0] = -0.49;
+//		t[1][1] = 0.05;
 		
 		ab[0][0] = 0.45;
 		ab[0][1] = 0.16;
-		ab[1][0] = 0.55;
-		ab[1][1] = 0.60;
+//		ab[1][0] = 0.55;
+//		ab[1][1] = 0.60;
 		
 		double alpha0 = 33.16;
 		R[0] = new SimpleMatrix(
 				new double[][] { { Math.cos(alpha0), -Math.sin(alpha0) }, { Math.sin(alpha0), Math.cos(alpha0) } });
 		
-		double alpha1 = 6.6;
-		R[1] = new SimpleMatrix(
-				new double[][] { { Math.cos(alpha1), -Math.sin(alpha1) }, { Math.sin(alpha1), Math.cos(alpha1) } });
+//		double alpha1 = 6.6;
+//		R[1] = new SimpleMatrix(
+//				new double[][] { { Math.cos(alpha1), -Math.sin(alpha1) }, { Math.sin(alpha1), Math.cos(alpha1) } });
 		
 		rho[0] = 0.92; 
-		rho[1] = 0.40;
+//		rho[1] = 0.40;
 		
 		df[0] = 0.61;
-		df[1] = 0.98;
+//		df[1] = 0.98;
 		
 //		for (int i = 0; i < nr_ellipses; i++) {
 //
@@ -564,7 +564,7 @@ public class Bubeck_Niklas_BA {
 			for (int j = 0; j < abs.getHeight(); j++) {
 
 				// punkt in file reinschreiben
-				if ((i > xstart && i < xend) || (i > xstart2 && i < xend2) ) {
+				if ((i > xstart && i < xend) || (i > xstart2 && i < xend2) && counter == 0) {
 					System.out.println("ist 0 0 ");
 					continue;
 
@@ -678,7 +678,7 @@ public class Bubeck_Niklas_BA {
 
 		// calc inital fabso
 		double[][] points = get_comp_points(abso, dark, thresh_map, true, 3);
-		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 3);
+		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 1);
 
 		// calc thresholding map
 		int iter = 1;
@@ -751,8 +751,8 @@ public class Bubeck_Niklas_BA {
 			for (int j = 0; j < abs.getHeight(); j++) {
 
 				float temp = abs.getAtIndex(i, j);
-				float val = (float) (regression.beta(3) * Math.pow(temp, 3) + regression.beta(2) * Math.pow(temp, 2)
-						+ regression.beta(1) * temp + regression.beta(0));
+				float val =  (float) (regression.beta(2) * Math.pow(temp, 2) + regression.beta(1) * temp + regression.beta(0)); // (regression.beta(3) * Math.pow(temp, 3) + regression.beta(2) * Math.pow(temp, 2)
+				
 				System.out.println("i: " + i + "j: " + j + "val: " + val);
 //				if (((i > xstart && i < xend) || (i > xstart2 && i < xend2))) {
 //					dark.setAtIndex(i, j, val);
@@ -785,9 +785,9 @@ public class Bubeck_Niklas_BA {
 //		double [][] points2 = {{2 ,3}, {2, 8}, {3, 4} ,{10, 5} ,{14, 3} ,{3, 8}};
 
 		// Calculate regression and put the values to list
-		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 3);
+		PolynomialRegression regression = PolynomialRegression.calc_regression(points, 2);
 		List<Float> reglist = new ArrayList<Float>();
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i <= 2; i++) {
 			reglist.add((float) regression.beta(i));
 		}
 		ListInFile.export(reglist, "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Files/reg.csv", "regression");
