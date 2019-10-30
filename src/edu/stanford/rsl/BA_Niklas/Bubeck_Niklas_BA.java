@@ -570,11 +570,11 @@ public class Bubeck_Niklas_BA {
 
 				}
 
-//				if ((0 == (int) abs.getAtIndex(i, j)) && ( 0 == (int) dar.getAtIndex(i, j))) {
-//					System.out.println("ist 0 0 ");
-//					continue;
-//
-//				}
+				if ((0 == (int) abs.getAtIndex(i, j)) && ( 0 == (int) dar.getAtIndex(i, j))) {
+					System.out.println("ist 0 0 ");
+					continue;
+
+				}
 //				if(abs.getAtIndex(i, j) != (float) 0.0) {
 				printWriterdark.println(dar.getAtIndex(i, j));
 				printWriterabso.println(abs.getAtIndex(i, j));
