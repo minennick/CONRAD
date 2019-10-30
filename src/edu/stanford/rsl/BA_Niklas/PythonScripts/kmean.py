@@ -4,7 +4,18 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
+params = {'legend.fontsize': 20,
+          'legend.handlelength': 2,
+          'axes.labelsize' : 20,
+          'axes.labelweight': 'bold'
+          }
 
+plt.rcParams.update(params)
+font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 20}
+
+plt.rc('font', **font)
 
 filemean = 'C:/Reconstruction/CONRAD/src/edu/stanford/rsl/BA_Niklas/DataSheets/mean.csv'
 filehisto = 'C:/Reconstruction/CONRAD/src/edu/stanford/rsl/BA_Niklas/DataSheets/values.csv'
@@ -101,10 +112,12 @@ plt.plot(newhisto, newcount, "ro", label="histogram")
 plt.legend()
 plt.ylabel("count")
 plt.xlabel("value")
+plt.savefig('C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Tex und Schreibarbeit/bt/pictures_corrected/histogram.pdf', bbox_inches='tight')
 plt.show()
 
 plt.scatter(histopoints[y_km ==0,0], histopoints[y_km == 0,1], s=50, c='red')
 plt.scatter(histopoints[y_km ==1,0], histopoints[y_km == 1,1], s=50, c='black')
 plt.scatter(histopoints[y_km ==2,0], histopoints[y_km == 2,1], s=50, c='blue')
 plt.scatter(histopoints[y_km ==3,0], histopoints[y_km == 3,1], s=50, c='cyan')
+plt.savefig('C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Tex und Schreibarbeit/bt/pictures_corrected/classes.pdf', bbox_inches='tight')
 plt.show()

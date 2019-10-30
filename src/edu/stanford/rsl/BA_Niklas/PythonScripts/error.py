@@ -2,6 +2,19 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
+params = {'legend.fontsize': 20,
+          'legend.handlelength': 2,
+          'axes.labelsize' : 20,
+          'axes.labelweight': 'bold'
+          }
+
+plt.rcParams.update(params)
+font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 20}
+
+plt.rc('font', **font)
+
 fileerror = 'C:/Reconstruction/CONRAD/src/edu/stanford/rsl/BA_Niklas/DataSheets/error.csv'
 
 error = []
@@ -29,5 +42,6 @@ plt.legend()
 plt.ylabel("Error")
 plt.xlabel("Iteration")
 # plt.axis([0, len(error), 0, 1])
+plt.savefig('C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Tex und Schreibarbeit/bt/pictures_corrected/error.pdf', bbox_inches='tight')
 plt.show()
 # plt.savefig('C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Bilder/BilderTestFilled/error.pdf')
