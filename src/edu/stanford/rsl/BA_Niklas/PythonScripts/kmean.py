@@ -74,7 +74,7 @@ histopoints = np.array(histopoints)
 
 
 # create kmeans object
-kmeans = KMeans(n_clusters= int(float(nr_ellipses[0])))
+kmeans = KMeans(n_clusters= 3)
 # fit kmeans object to data
 kmeans.fit(histopoints)
 # print location of clusters learned by kmeans object
@@ -85,7 +85,7 @@ y_km = kmeans.fit_predict(histopoints)
 
 
 centers = kmeans.cluster_centers_
-means = [0]
+means = []
 
 
 for i in range(0, len(centers)):

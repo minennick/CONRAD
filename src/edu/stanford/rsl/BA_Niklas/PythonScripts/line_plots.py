@@ -62,7 +62,7 @@ pixels = np.linspace(0, 128, 128)
 
 
 plt.plot(pixels, gt,"b-", label="Ground-Truth")
-plt.plot(pixels, reco,"r-" ,label="Reconstructed")
+plt.plot(pixels, reco,"r-" ,label="Estimated")
 plt.plot(pixels, trunc, "y-" ,label="Truncated")
 plt.legend()
 plt.ylabel("Value")
