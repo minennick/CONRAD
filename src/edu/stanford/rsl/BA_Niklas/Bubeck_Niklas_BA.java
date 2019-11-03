@@ -95,10 +95,10 @@ public class Bubeck_Niklas_BA {
 		rho = new double[nr_ellipses];
 		df = new double[nr_ellipses];
 
-		t[0][0] = 0.42;
-		t[0][1] = 0.21;
-		t[1][0] = -0.49;
-		t[1][1] = 0.05;
+		t[0][0] = 0.59; 	// within: 0.02  
+		t[0][1] = 0.60;		// within:  0.11
+		t[1][0] = 0.2;	// within: -0.09
+		t[1][1] = 0.20;		// within: 0.05
 //		t[2][0] = 0.42;
 //		t[2][1] = -0.75;
 //		t[3][0] = -0.38;
@@ -556,13 +556,13 @@ public class Bubeck_Niklas_BA {
 
 		}
 
-//		NumericGrid[] wo_bg = new NumericGrid[materials.length - 1];
-//		int cter = 0;
-//		for (int i = 1; i < materials.length; i++) {
-//			wo_bg[cter] = materials[i];
-//			cter++;
-//		}
-//		materials = wo_bg;
+		NumericGrid[] wo_bg = new NumericGrid[materials.length - 1];
+		int cter = 0;
+		for (int i = 1; i < materials.length; i++) {
+			wo_bg[cter] = materials[i];
+			cter++;
+		}
+		materials = wo_bg;
 
 //		NumericGrid[] blurred = new NumericGrid[materials.length];
 //		for(int h = 0; h < materials.length; h++) {
@@ -722,7 +722,7 @@ public class Bubeck_Niklas_BA {
 		return pci_reko;
 	}
 
-	public static NumericGrid split_dark(NumericGrid trc_dark_sino, NumericGrid mat, NumericGrid[] materials) {
+	public static NumericGrid split_dark(NumericGrid trc_dark_sino, NumericGrid mat, NumericGrid[] materials, int counter) {
 		ProjectorAndBackprojector p = new ProjectorAndBackprojector(nr_of_projections, 2 * Math.PI);
 		Grid2D mat_sino = p.project((Grid2D) mat, new Grid2D(200, 360));
 
@@ -742,8 +742,8 @@ public class Bubeck_Niklas_BA {
 				for (int l = 0; l < 360; l++) {
 					int[] idx = { k, l };
 
-					if ((material_sino.getAtIndex(k, l) <= (float) 5)) { // || (single_mat_sino.getAtIndex(k, l) !=
-																			// (float) 0.0))
+					if ((material_sino.getAtIndex(k, l) == (float) 0)) { // <= (float) 5) && counter == 0
+																			
 						continue;
 					} else {
 						((Grid2D) splitted_dark).setAtIndex(k, l, (float) 1000);
@@ -1102,7 +1102,7 @@ public class Bubeck_Niklas_BA {
 
 		if (counter == 0) {
 			int random = (int) Math.random();
-			sino_dark_trunc = split_dark(pci_sino_truncated.getDark(), amp_material, materials);
+			sino_dark_trunc = split_dark(pci_sino_truncated.getDark(), amp_material, materials, counter);
 			sino_dark_trunc.show("splitted dark");
 			if (saveImagesCheck) {
 				ImagePlus imp8 = new ImagePlus("Filled", ImageUtil.wrapGrid2D((Grid2D) sino_dark_trunc).createImage());
@@ -1432,9 +1432,9 @@ public class Bubeck_Niklas_BA {
 			instreko = p.filtered_backprojection((Grid2D) pci_sino.getDark(), size);
 			instreko.show("direkte fbp noise");
 
-			PhaseContrastImages instreko2 = p.filtered_backprojection(pci_sino, size);
-			instreko2.show("direkte fbp");
-			pci = instreko2;
+//			PhaseContrastImages instreko2 = p.filtered_backprojection(pci_sino, size);
+//			instreko2.show("direkte fbp");
+//			pci = instreko2;
 
 			ImagePlus imp5 = new ImagePlus("Filled", ImageUtil.wrapGrid2D((Grid2D) pci_sino.getAmp()).createImage());
 			String path5 = "C:/Users/Niklas/Documents/Uni/Bachelorarbeit/Bilder/BilderTestFilled/AbsorptionSinogram";
@@ -1471,7 +1471,7 @@ public class Bubeck_Niklas_BA {
 				IJ.saveAs(imp3, "png", path3);
 
 				ProjectorAndBackprojector o = new ProjectorAndBackprojector(360, 2 * Math.PI);
-				trunc_reko = o.backprojection_pixel((Grid2D) pci_sino_truncated.getDark(), size);
+				trunc_reko = o.filtered_backprojection((Grid2D) pci_sino_truncated.getDark(), size);
 				trunc_reko.show("truncated");
 
 				ImagePlus imp4 = new ImagePlus("Filled", ImageUtil.wrapGrid2D((Grid2D) trunc_reko).createImage());
@@ -1590,7 +1590,7 @@ public class Bubeck_Niklas_BA {
 //					regression_dark.R2());
 
 			Grid2D add = new Grid2D(200, 360);
-			NumericPointwiseOperators.copy(add, pci_sino_truncated.getDark());
+//			NumericPointwiseOperators.copy(add, pci_sino_truncated.getDark());
 			NumericGrid[] fill_up = new NumericGrid[masks.length];
 			double[] correlation = new double[masks.length];
 			for (int i = 0; i < masks.length; i++) {
@@ -1599,9 +1599,9 @@ public class Bubeck_Niklas_BA {
 
 				for (int k = 0; k < 200; k++) {
 					for (int l = 0; l < 360; l++) {
-						if (k >= xend && k <= xstart2) {
-							continue;
-						}
+//						if (k >= xend && k <= xstart2) {
+//							continue;
+//						}
 						int[] idx = { k, l };
 						float amp_value = amp_materials_sino[i].getValue(idx);
 						float val = (float) (amp_value * correlation[i]);
@@ -1674,19 +1674,19 @@ public class Bubeck_Niklas_BA {
 				}
 
 				System.out.println(Arrays.toString(filled_sinos[j].getSize()));
-//				trunc_filled_sinos[j] = fake_truncation_image((Grid2D) filled_sinos[j], xend, xstart2, "x", value); //
+				trunc_filled_sinos[j] = fake_truncation_image((Grid2D) filled_sinos[j], xend, xstart2, "x", value); //
 
-				NumericPointwiseOperators.addBy(all_sinos, filled_sinos[j]); // filled_sinos -> trunc_filled_sinos
+				NumericPointwiseOperators.addBy(all_sinos, trunc_filled_sinos[j]); // filled_sinos -> trunc_filled_sinos
 //				trunc_filled_sinos[j].show("trunc filled sino " + j);
 				all_sinos.show("all_sinos");
 
 			}
 			String patherror = pathtoproject + pathtofile + "Datasheets/error.csv";
 			ListInFile.export(errorlist, patherror, "error-values");
-//			NumericGrid trc_all_sinos = fake_truncation_image((Grid2D) all_sinos, xend, xstart2, "x", value);
+			NumericGrid trc_all_sinos = fake_truncation_image((Grid2D) all_sinos, xend, xstart2, "x", value);
 //			trc_all_sinos.show("trc_all_sinos");
 			pci_sino_truncated.getDark().show("lelel");
-//			NumericPointwiseOperators.addBy(all_sinos, pci_sino_truncated.getDark());
+			NumericPointwiseOperators.addBy(all_sinos, pci_sino_truncated.getDark());
 			all_sinos.show("endsinogramm");
 
 			ImagePlus imp3 = new ImagePlus("Filled", ImageUtil.wrapGrid2D((Grid2D) all_sinos).createImage());
@@ -1791,7 +1791,7 @@ public class Bubeck_Niklas_BA {
 //		PhaseContrastImages superposition = o.backprojection_pixel(pci_recon, size);
 //		superposition.show("superposition");
 
-		get_line_plot_data(64);
+		get_line_plot_data(50);
 		String command = "py " + pathtoproject + pathtofile + "PythonScripts/line_plots.py";
 		try {
 			Process process = Runtime.getRuntime().exec(command);

@@ -55,9 +55,9 @@ gt = gt.astype(np.float)
 reco = reco.astype(np.float)
 trunc = trunc.astype(np.float)
 
-scale = (max(gt) - min(gt)) / (max(trunc) - min(trunc))
+# scale = (max(gt) - min(gt)) / (max(trunc) - min(trunc))
 
-trunc = [i * scale for i in trunc]
+# trunc = [i * scale for i in trunc]
 pixels = np.linspace(0, 128, 128)
 
 
