@@ -754,12 +754,12 @@ public class Bubeck_Niklas_BA {
 				float val =  (float) (regression.beta(2) * Math.pow(temp, 2) + regression.beta(1) * temp + regression.beta(0)); // (regression.beta(3) * Math.pow(temp, 3) + regression.beta(2) * Math.pow(temp, 2)
 				
 				System.out.println("i: " + i + "j: " + j + "val: " + val);
-//				if (((i > xstart && i < xend) || (i > xstart2 && i < xend2))) {
-//					dark.setAtIndex(i, j, val);
-//					System.out.println("setze value dark: " + val + "und temp als: " + temp + "an der stelle i: " + i
-//							+ "und j: " + j);
-//				}
-				dark.setAtIndex(i, j, val);
+				if (((i > xstart && i < xend) || (i > xstart2 && i < xend2))) {
+					dark.setAtIndex(i, j, val);
+					System.out.println("setze value dark: " + val + "und temp als: " + temp + "an der stelle i: " + i
+							+ "und j: " + j);
+				}
+//				dark.setAtIndex(i, j, val);
 
 			}
 		}
